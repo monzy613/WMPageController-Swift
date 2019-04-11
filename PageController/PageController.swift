@@ -206,7 +206,7 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(PageController.growCachePolicyToHigh), object: nil)
         memCache.removeAllObjects()
         if memoryWarningCount < 3 {
-            perform(#selector(PageController.growCachePolicyAfterMemoryWarning), with: nil, afterDelay: 3.0, inModes: [RunLoopMode.commonModes])
+            perform(#selector(PageController.growCachePolicyAfterMemoryWarning), with: nil, afterDelay: 3.0, inModes: [RunLoop.Mode.common])
         }
     }
     
@@ -312,8 +312,8 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
         for viewController in displayingControllers.allValues {
             if let vc = viewController as? UIViewController {
                 vc.view.removeFromSuperview()
-                vc.willMove(toParentViewController: nil)
-                vc.removeFromParentViewController()
+                vc.willMove(toParent: nil)
+                vc.removeFromParent()
             }
         }
         memoryWarningCount = 0
@@ -454,9 +454,9 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
     }
     
     fileprivate func addCachedViewController(_ viewController: UIViewController, atIndex index: Int) {
-        addChildViewController(viewController)
+        addChild(viewController)
         viewController.view.frame = childViewFrames[index]
-        viewController.didMove(toParentViewController: self)
+        viewController.didMove(toParent: self)
         contentView?.addSubview(viewController.view)
         willEnterController(viewController, atIndex: index)
         displayingControllers.setObject(viewController, forKey: index as NSCopying)
@@ -468,9 +468,9 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
         if let optionalKeys = keys {
             viewController.setValue(values?[index], forKey: optionalKeys[index])
         }
-        addChildViewController(viewController)
+        addChild(viewController)
         viewController.view.frame = childViewFrames.count > 0 ? childViewFrames[index] : view.frame
-        viewController.didMove(toParentViewController: self)
+        viewController.didMove(toParent: self)
         contentView?.addSubview(viewController.view)
         willEnterController(viewController, atIndex: index)
         displayingControllers.setObject(viewController, forKey: index as NSCopying)
@@ -478,8 +478,8 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
     
     fileprivate func removeViewController(_ viewController: UIViewController, atIndex index: Int) {
         viewController.view.removeFromSuperview()
-        viewController.willMove(toParentViewController: nil)
-        viewController.removeFromParentViewController()
+        viewController.willMove(toParent: nil)
+        viewController.removeFromParent()
         displayingControllers.removeObject(forKey: index)
         if memCache.object(forKey: NSNumber(integerLiteral: index)) == nil {
             willCachedController(viewController, atIndex: index)
@@ -505,12 +505,12 @@ open class PageController: UIViewController, UIScrollViewDelegate, MenuViewDeleg
         menuView?.reload()
         guard selectedIndex != 0 else { return }
         menuView?.selectItemAtIndex(selectedIndex)
-        view.bringSubview(toFront: menuView!)
+        view.bringSubviewToFront(menuView!)
     }
     
     @objc fileprivate func growCachePolicyAfterMemoryWarning() {
         cachePolicy = CachePolicy.balanced
-        perform(#selector(PageController.growCachePolicyToHigh), with: nil, afterDelay: 2.0, inModes: [RunLoopMode.commonModes])
+        perform(#selector(PageController.growCachePolicyToHigh), with: nil, afterDelay: 2.0, inModes: [RunLoop.Mode.common])
     }
     
     @objc fileprivate func growCachePolicyToHigh() {

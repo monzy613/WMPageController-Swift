@@ -33,13 +33,13 @@ class ProgressView: UIView {
         gap = fabs(progress - pos)
         sign = progress > pos ? -1 : 1
         step = gap / 15.0
-        link?.remove(from: RunLoop.main, forMode: RunLoopMode.commonModes)
+        link?.remove(from: RunLoop.main, forMode: RunLoop.Mode.common)
         let tempLink = CADisplayLink(target: self, selector: #selector(ProgressView.progressChanged))
-        tempLink.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+        tempLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
         link = tempLink
     }
     
-    func progressChanged() {
+    @objc func progressChanged() {
         if gap > 0.000001 {
             gap -= step
             if gap < 0.0 {

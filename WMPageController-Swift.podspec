@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
    s.name         = "WMPageController-Swift"
-   s.version      = "1.4.0"
+   s.version      = "1.4.1"
    s.summary      = "An easy solution to page controllers like NetEase News.(Swift Implementation)"
    s.homepage     = "https://github.com/wangmchn/WMPageController-Swift"
    s.license      = 'MIT (LICENSE)'
